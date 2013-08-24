@@ -35,6 +35,7 @@ package harvard.robobees.simbeeotic.model.comms;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -43,11 +44,14 @@ import com.bulletphysics.linearmath.Transform;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import org.apache.log4j.Logger;
+
 import harvard.robobees.simbeeotic.util.MathUtil;
 import harvard.robobees.simbeeotic.model.AbstractModel;
 import harvard.robobees.simbeeotic.model.Model;
 import harvard.robobees.simbeeotic.configuration.ConfigurationAnnotations.GlobalScope;
 import harvard.robobees.simbeeotic.ClockControl;
+import harvard.robobees.simbeeotic.SimTime;
 
 
 /**
@@ -67,6 +71,11 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
     private double rangeThresh = 10;      // m
     private float noiseFloorMean = -100;  // dBm
     private float noiseFloorSigma = 10;   // dBm
+
+    // speed of electromagnetic wave in air
+    private double wavePropagationSpeed = 3e8/1.003d;
+    
+    private static Logger logger = Logger.getLogger(AbstractPropagationModel.class);
 
 
     /**
@@ -135,11 +144,14 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
 
             // todo: random degradation of signal?
 
-            // todo: offset reception time?
-
             // todo: copy the data?
 
-            getSimEngine().scheduleEvent(entry.getKey(), clockControl.getCurrentTime(),
+            SimTime delay = new SimTime(clockControl.getCurrentTime(), 
+            		getPropagationDelay(tx, rx), TimeUnit.NANOSECONDS);
+            
+            logger.debug("Propagation delay: " + getPropagationDelay(tx, rx));
+            
+            getSimEngine().scheduleEvent(entry.getKey(), delay,
                                          new ReceptionEvent(data, rxPower, band));
         }
     }
@@ -244,8 +256,31 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
         return temp;
     }
 
+    /**
+     * Calculates wave propagation delay between transmitter and receiver. This
+     * model assumes pure air, i.e. no vacuum or water. 
+     * @param tx Transmitting radio
+     * @param rx Receiving radio
+     * @return Propagation delay of electromagnetic wave from transmitter to receiver in nanoseconds 
+     */
+    protected long getPropagationDelay(Radio tx, Radio rx) {
+    	Vector3f diff = new Vector3f();
+    	
+    	diff.sub(tx.getPosition(), rx.getPosition());
+    	double distance = diff.length();
+    	
+    	double delay = (distance / wavePropagationSpeed) * 1e9; 
+    	    	
+    	return Math.round(delay);
+    }
 
     @Inject(optional = true)
+    public final void setWavePropagationSpeed(@Named("wave-propagation-speed") final double wavePropagationSpeed) {
+		this.wavePropagationSpeed = wavePropagationSpeed;
+	}
+
+
+	@Inject(optional = true)
     public final void setNoiseFloorMean(@Named("noise-floor-mean") final float noiseFloorMean) {
         this.noiseFloorMean = noiseFloorMean;
     }
