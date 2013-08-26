@@ -63,6 +63,9 @@ import java.util.concurrent.TimeUnit;
  * @author bkate
  */
 public abstract class AbstractRadio extends AbstractModel implements Radio {
+    @Inject
+    @GlobalScope
+    private ClockControl clockControl;
 
     private PhysicalEntity host;
     private PropagationModel propModel;
@@ -83,7 +86,20 @@ public abstract class AbstractRadio extends AbstractModel implements Radio {
     private AntennaPattern pattern;
     private int sendQueueSize = 100;
 
-    private static final double BYTES_PER_KILOBIT = 125;
+    // --------------------------------
+    // variables for collision modeling
+
+    // predicate whether to detect collisions or ignore them
+    private boolean collisions = false;
+    
+    // time when currently ongoing reception will be fully received
+    long endOngoingReception;
+    
+    // event ID of currently receiving reception
+    long endOfReceptionEventId = 0;
+    
+
+	private static final double BYTES_PER_KILOBIT = 125;
 
 
     /** {@inheritDoc} */
@@ -149,7 +165,7 @@ public abstract class AbstractRadio extends AbstractModel implements Radio {
 
 
     /**
-     * Handles the reception of an RF transmission.
+     * Handles the reception of an RF transmission. 
      *
      * @param time The time of the transmission.
      * @param event The details of the transmission.
@@ -159,7 +175,73 @@ public abstract class AbstractRadio extends AbstractModel implements Radio {
         receive(time, event.getData(), event.getRxPower(), event.getBand().getCenterFrequency());
     }
 
+    /**
+     * Handles end of receiving of a message over RF transmission. This
+     * handler is used when collisions are enabled. If no collisions occurred
+     * during receiving of the message, this handler is called which in turn notify
+     * all registered listeners. 
+     * 
+     * @param time The time of end of the transmission.
+     * @param event The details of the finished transmission.
+     */
+    @EventHandler
+    public final void handleEndOfReceptionEvent(SimTime time, EndOfReceptionEvent event) {    	
+    	// invalidate eventID
+    	endOfReceptionEventId = 0;
+    	
+    	// notify all listeners
+    	notifyListeners(time, event.getData(), event.getRxPower());
+    }
 
+    /**
+     * Method checks, whether given reception is colliding with already
+     * ongoing reception. 
+     * @param time The time when given reception starts
+     * @param event Details of the reception
+     * @return TRUE when collision detected, FALSE if no collision
+     */
+    protected boolean checkForCollision(SimTime time, byte[] data, double rxPower, double frequency) {
+    	// if no collision support, then return "no collision detected"
+    	if(!collisions)
+    		return false;
+    	
+    	// if end of previous reception is greater than start of new reception, we
+    	// have a collision
+    	if(endOngoingReception > time.getTime()) {
+    		
+    		// cancel reception of event, i.e. drop the message
+    		if(endOfReceptionEventId != 0) {
+    			getSimEngine().cancelEvent(endOfReceptionEventId);
+    			endOfReceptionEventId = 0;
+    		}
+    		
+    		// if new reception lasts longer then ongoing one, update variables
+    		long newEndRxTime = (long)(data.length / BYTES_PER_KILOBIT / getBandwidth())
+    				+ time.getTime();
+    		
+    		if(endOngoingReception < newEndRxTime) {
+    			endOngoingReception = newEndRxTime;
+    		}
+    		
+    		getAggregator().addValue("collisions", "number", 1);    		
+    		return true;
+    		
+    	} else { // no collision detected
+    		
+    		// calculate end of reception time
+    		SimTime delay = new SimTime(clockControl.getCurrentTime(), 
+    				(long)(data.length / BYTES_PER_KILOBIT / getBandwidth()) * TimeUnit.SECONDS.toMillis(1), 
+    				TimeUnit.NANOSECONDS);    		
+    		endOngoingReception = delay.getTime();
+    		
+    		// schedule end of reception event
+    		endOfReceptionEventId = getSimEngine().scheduleEvent(getModelId(), 
+    				delay, new EndOfReceptionEvent(data, rxPower, frequency));
+    		
+    		return false;
+    	}
+    }
+    
     /** {@inheritDoc} */
     public void receive(SimTime time, byte[] data, double rxPower, double frequency) {
 
@@ -170,8 +252,7 @@ public abstract class AbstractRadio extends AbstractModel implements Radio {
         getAggregator().addValue("energy", "radio-rx", timeToRx * getRxEnergy());
     }
 
-
-    /** {@inheritDoc} */
+	/** {@inheritDoc} */
     public void transmit(byte[] data) {
 
         double timeToTx = data.length / BYTES_PER_KILOBIT / getBandwidth();
@@ -399,6 +480,9 @@ public abstract class AbstractRadio extends AbstractModel implements Radio {
         return propModel;
     }
 
+    public boolean isCollisions() {
+		return collisions;
+	}
 
     /**
      * {@inheritDoc}
@@ -484,4 +568,14 @@ public abstract class AbstractRadio extends AbstractModel implements Radio {
     public final void setSendQueueSize(@Named("send-queue-size") final int size) {
         this.sendQueueSize = size;
     }
+
+    /**
+     * Sets flag whether the radio should take into account collisions.  
+     * @param collisions True if collisions should be considered
+     */
+    @Inject(optional = true)
+    public final void setCollisions(@Named("collisions") final boolean collisions) {
+		this.collisions = collisions;
+	}
+
 }

@@ -32,8 +32,11 @@
 package harvard.robobees.simbeeotic.model.comms;
 
 
+import org.apache.log4j.Logger;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+
 import harvard.robobees.simbeeotic.SimTime;
 
 
@@ -54,6 +57,7 @@ public class DefaultRadio extends AbstractRadio {
     private double maxPower = 0;            // dBm
     // You don't snuggle with Max Power, you strap yourself in and feel the G's!
 
+    private static Logger logger = Logger.getLogger(DefaultRadio.class);
 
     /**
      * {@inheritDoc}
@@ -83,8 +87,15 @@ public class DefaultRadio extends AbstractRadio {
         double snr = rxPower - getPropagationModel().getNoiseFloor(getOperatingBand());
 
         // enough power to capture signal?
-        if (snr >= snrMargin) {
-            notifyListeners(time, data, rxPower);
+        if (snr >= snrMargin) {        	
+        	if(isCollisions()) {
+	        	// check for collision 
+	        	if(checkForCollision(time, data, rxPower, frequency)) {
+	        		logger.debug("Collision detected");
+	        	} 
+        	} else { 
+        		notifyListeners(time, data, rxPower);
+	        }
         }
     }
 

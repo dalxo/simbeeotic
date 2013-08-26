@@ -149,7 +149,7 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
             SimTime delay = new SimTime(clockControl.getCurrentTime(), 
             		getPropagationDelay(tx, rx), TimeUnit.NANOSECONDS);
             
-            logger.debug("Propagation delay: " + getPropagationDelay(tx, rx));
+            logger.debug("Propagation delay: " + getPropagationDelay(tx, rx) + "ns");
             
             getSimEngine().scheduleEvent(entry.getKey(), delay,
                                          new ReceptionEvent(data, rxPower, band));
