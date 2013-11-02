@@ -33,6 +33,7 @@ package harvard.robobees.simbeeotic.model.comms;
 
 
 import harvard.robobees.simbeeotic.SimTime;
+import harvard.robobees.simbeeotic.model.protocol.AbstractPduWrap;
 
 import javax.vecmath.Vector3f;
 
@@ -52,17 +53,13 @@ public interface Radio {
      */
     public void transmit(byte[] data);
 
-
     /**
-     * Transmits a message asynchronously over the physical medium. The {@link PropagationModel}
-     * in use will determine which radios receive the message.
+     * Transmits a protocol data unit over the physical medium. The {@link PropagationModel}
+     * in use will determine which radios, if any, receive the message.
      *
-     * @param data The data to be transmitted.
-     *
-     * @return True on success and false on failure. Failure occurs if the massage buffer
-     *         in the radio is full.
+     * @param data PDU object which represents data to be transmitted
      */
-    public boolean transmitAsync(byte[] data);
+    public void transmit(AbstractPduWrap pdu);
 
     /**
      * Called by the {@link PropagationModel} when a transmission is received by this
@@ -75,6 +72,16 @@ public interface Radio {
      */
     public void receive(SimTime time, byte[] data, double rxPower, double frequency);
 
+    /**
+     * Called by the {@link PropagationModel} when a transmission is received by this
+     * radio.
+     *
+     * @param time The simulation time when the message was received.
+     * @param data Protocol data unit which represents the data received.
+     * @param rxPower The strength of the received signal (in dBm).
+     * @param frequency The frequency of the received signal (in MHz).
+     */
+    public void receive(SimTime time, AbstractPduWrap pdu, double rxPower, double frequency);
 
     /**
      * Gets the position of the radio.

@@ -37,6 +37,10 @@
         <plugins>
         	<plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                	<debug>true</debug>
+                <debuglevel>lines,vars,source</debuglevel>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -131,12 +131,14 @@
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>
+          				<debug>true</debug>
+          				<debuglevel>lines,vars,source</debuglevel>                        
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
                     <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>0.7.3</version>
+                    <!--  <version>0.7.3</version> -->
                     <executions>
                         <execution>
                             <goals>
@@ -226,7 +228,7 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <url>file://${user.dir}/repo</url>
+            <url>file://C:/Work/_Git/simbeeotic/repo</url>
         </repository>
     </repositories>
 

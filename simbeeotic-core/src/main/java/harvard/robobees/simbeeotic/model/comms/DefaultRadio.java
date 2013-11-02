@@ -33,6 +33,7 @@ package harvard.robobees.simbeeotic.model.comms;
 
 
 import org.apache.log4j.Logger;
+import org.jfree.util.Log;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -88,14 +89,7 @@ public class DefaultRadio extends AbstractRadio {
 
         // enough power to capture signal?
         if (snr >= snrMargin) {        	
-        	if(isCollisions()) {
-	        	// check for collision 
-	        	if(checkForCollision(time, data, rxPower, frequency)) {
-	        		logger.debug("Collision detected");
-	        	} 
-        	} else { 
-        		notifyListeners(time, data, rxPower);
-	        }
+        	notifyListeners(time, data, rxPower);
         }
     }
 

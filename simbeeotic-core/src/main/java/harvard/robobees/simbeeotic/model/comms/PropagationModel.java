@@ -31,6 +31,8 @@
  */
 package harvard.robobees.simbeeotic.model.comms;
 
+import harvard.robobees.simbeeotic.model.protocol.AbstractPduWrap;
+
 
 /**
  * An interface that describes the physical environment through which RF
@@ -51,6 +53,16 @@ public interface PropagationModel {
      */
     public void transmit(Radio tx, byte[] data, double txPower, Band band);
 
+    /**
+     * Broadcasts a message in RF.
+     *
+     * @param tx The {@link Radio} that is transmitting.
+     * @param data The data to be transferred.
+     * @param txPower The amount of energy used to transmit the data (in dBm).
+     * @param band The RF band for this transmission.
+     */
+    public void transmit(Radio tx, AbstractPduWrap pdu, double txPower, Band band);
+    
 
     /**
      * Gets a noise floor measurement from the RF environment. The returned value

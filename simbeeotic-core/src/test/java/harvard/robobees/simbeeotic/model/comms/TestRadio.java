@@ -39,6 +39,7 @@ import harvard.robobees.simbeeotic.model.comms.PropagationModel;
 import harvard.robobees.simbeeotic.model.comms.Band;
 import harvard.robobees.simbeeotic.model.comms.Radio;
 import harvard.robobees.simbeeotic.model.comms.IsotropicAntenna;
+import harvard.robobees.simbeeotic.model.protocol.AbstractPduWrap;
 
 import javax.vecmath.Vector3f;
 
@@ -108,19 +109,23 @@ public class TestRadio implements Radio {
         logger.debug("received message wih power: " + rxPower + " dBm ( " + MathUtil.dbmToMw(rxPower) + " mW )");
     }
 
+	@Override
+	public void receive(SimTime time, AbstractPduWrap pdu, double rxPower,
+			double frequency) {
+        points.add(rxPower);
+
+        logger.debug("received message wih power: " + rxPower + " dBm ( " + MathUtil.dbmToMw(rxPower) + " mW )");		
+	}
 
     @Override
     public void transmit(byte[] data) {
         propModel.transmit(this, data, -25, new Band(2405, 5));
     }
 
-
-    @Override
-    public boolean transmitAsync(byte[] data) {
-
-        transmit(data);
-        return true;
-    }
+	@Override
+	public void transmit(AbstractPduWrap pdu) {
+        propModel.transmit(this, pdu, -25, new Band(2405, 5));		
+	}
 
 
     @Override
@@ -131,4 +136,5 @@ public class TestRadio implements Radio {
     public List<Double> getReceivedData() {
         return points;
     }
+
 }

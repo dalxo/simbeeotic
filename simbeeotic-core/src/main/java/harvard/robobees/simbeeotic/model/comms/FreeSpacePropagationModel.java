@@ -33,6 +33,7 @@ package harvard.robobees.simbeeotic.model.comms;
 
 
 import static harvard.robobees.simbeeotic.environment.PhysicalConstants.SPEED_OF_LIGHT;
+import harvard.robobees.simbeeotic.model.protocol.AbstractPduWrap;
 
 
 /**
@@ -76,4 +77,5 @@ public class FreeSpacePropagationModel extends AbstractPropagationModel {
 
         return rxPower + 10 * Math.log10(loss);
     }
+
 }

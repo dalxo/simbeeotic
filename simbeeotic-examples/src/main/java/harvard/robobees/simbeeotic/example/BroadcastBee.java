@@ -82,7 +82,7 @@ public class BroadcastBee extends SimpleBee implements MessageListener {
 
         Vector3f pos = getTruthPosition();
 
-        logger.info("ID: " + getModelId() + "  " +
+        logger.info("Kinematics: ID: " + getModelId() + "  " +
                     "time: " + time.getImpreciseTime() + "  " +
                     "pos: " + pos);
     }
@@ -90,7 +90,7 @@ public class BroadcastBee extends SimpleBee implements MessageListener {
 
     public void messageReceived(SimTime time, byte[] data, double rxPower) {
 
-        logger.info("ID: " + getModelId() + "  " +
+        logger.info("Radio: ID: " + getModelId() + "  " +
                     "time: " + time.getImpreciseTime() + "  " +
                     "power: " + rxPower + "  (dBm) " +
                     "recv from: " + new String(data));

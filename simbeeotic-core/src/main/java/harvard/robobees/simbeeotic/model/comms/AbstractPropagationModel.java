@@ -48,7 +48,9 @@ import org.apache.log4j.Logger;
 
 import harvard.robobees.simbeeotic.util.MathUtil;
 import harvard.robobees.simbeeotic.model.AbstractModel;
+import harvard.robobees.simbeeotic.model.Event;
 import harvard.robobees.simbeeotic.model.Model;
+import harvard.robobees.simbeeotic.model.protocol.AbstractPduWrap;
 import harvard.robobees.simbeeotic.configuration.ConfigurationAnnotations.GlobalScope;
 import harvard.robobees.simbeeotic.ClockControl;
 import harvard.robobees.simbeeotic.SimTime;
@@ -73,7 +75,7 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
     private float noiseFloorSigma = 10;   // dBm
 
     // speed of electromagnetic wave in air
-    private double wavePropagationSpeed = 3e8/1.003d;
+    private double wavePropagationSpeed = 2.99792458e8/1.003d;
     
     private static Logger logger = Logger.getLogger(AbstractPropagationModel.class);
 
@@ -113,7 +115,17 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
     /** {@inheritDoc} */
     @Override
     public void transmit(Radio tx, byte[] data, double txPower, Band band) {
+    	doTransmit(tx, data, txPower, band);
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    public void transmit(Radio tx, AbstractPduWrap pdu, double txPower, Band band) {
+    	doTransmit(tx, pdu, txPower, band);
+    }
+
+    
+    void doTransmit(Radio tx, Object data, double txPower, Band band) {
         Vector3f diff = new Vector3f();
 
         // determine the received signal strength at each radio
@@ -151,12 +163,16 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
             
             logger.debug("Propagation delay: " + getPropagationDelay(tx, rx) + "ns");
             
-            getSimEngine().scheduleEvent(entry.getKey(), delay,
-                                         new ReceptionEvent(data, rxPower, band));
-        }
+            Event re = null;
+            if(data instanceof byte[])
+            	re = new ReceptionEvent((byte[])data, rxPower, band);
+            if(data instanceof AbstractPduWrap)
+            	re = new ReceptionEventPdu((AbstractPduWrap)data, rxPower, band);
+            
+            getSimEngine().scheduleEvent(entry.getKey(), delay, re);
+        }    	
     }
-
-
+    
     /**
      * {@inheritDoc}
      *
