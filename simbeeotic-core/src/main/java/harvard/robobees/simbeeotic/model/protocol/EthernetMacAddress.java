@@ -52,7 +52,22 @@ public class EthernetMacAddress extends ProtocolAddress {
 		return Arrays.equals(addr, ((EthernetMacAddress)obj).getAddress());
 	}
 	
+	@Override
 	public int hashCode() {
 		return Arrays.hashCode(addr);
+	}
+	
+	@Override
+	public String toString() {
+		if(addr != null && addr.length == 6) {
+			return addr[0] + ":" 
+					+ addr[1] + ":" 
+					+ addr[2] + ":" 
+					+ addr[3] + ":" 
+					+ addr[4] + ":" 
+					+ addr[5];
+		} else {
+			return "::Wrong MAC address::";
+		}
 	}
 }
