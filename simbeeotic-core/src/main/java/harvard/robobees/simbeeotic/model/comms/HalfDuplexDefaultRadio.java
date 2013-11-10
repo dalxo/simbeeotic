@@ -226,18 +226,13 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
         // if there was a collision, do nothing and go back to LISTEN state
         if(radioState == DefaultRadioState.RX_BUSY_COLLISION) {
         	radioState = DefaultRadioState.LISTENING;
-        	notifyRadioEvent(DefaultRadioEvent.LISTEN, null, 0, 0);
-        	return;
+        	notifyRadioEvent(DefaultRadioEvent.LISTEN, null, 0, 0);        	
+        } else {                
+        	// go back to the LISTEN state
+        	radioState = DefaultRadioState.LISTENING;        
+        	// notify DLL for received data
+        	notifyRadioEvent(DefaultRadioEvent.RX_RECEIVED, event.getPdu(), event.getRxPower(), event.getFrequency());        
         }
-                
-        // go back to the LISTEN state
-        radioState = DefaultRadioState.LISTENING;
-        
-        // notify DLL for received data
-        notifyRadioEvent(DefaultRadioEvent.RX_RECEIVED, event.getPdu(), event.getRxPower(), event.getFrequency());
-        
-        // notify DLL that radio is back in LISTEN state
-        notifyRadioEvent(DefaultRadioEvent.LISTEN, null, 0, 0);
     }
     
     /**

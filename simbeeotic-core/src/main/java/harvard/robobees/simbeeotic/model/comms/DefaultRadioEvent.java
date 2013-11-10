@@ -4,7 +4,7 @@ public enum DefaultRadioEvent {
 
 	LISTEN,
 	
-	//END_OF_TX,
+	//END_OF_TX, we do not need this, we know when we request to transmist
 	
 	START_RX,
 	
