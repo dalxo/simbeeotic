@@ -175,4 +175,10 @@ public class DefaultRadio extends AbstractRadio {
     public final void setIdleEnergy(@Named("idle-energy") final double energy) {
         this.idleEnergy = energy;
     }
+
+
+	@Override
+	public long calculateAirTimeNs(long sizeBytes) {
+		return 0;
+	}
 }

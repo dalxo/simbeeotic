@@ -249,4 +249,11 @@ public class RF230 extends ZigbeeRadio {
         }
     }
 
+
+	@Override
+	public long calculateAirTimeNs(long sizeBytes) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

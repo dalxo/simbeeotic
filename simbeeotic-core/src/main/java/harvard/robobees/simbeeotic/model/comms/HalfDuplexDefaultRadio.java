@@ -236,11 +236,12 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
     }
     
     /**
-     * Calculates air time for transmission of given number of bytes in nanoseconds 
+     * {@inheritDoc}
      * @param size
      * @return
      */
-    long calculateAirTimeNs(long sizeBytes) {    	
+    @Override
+    public long calculateAirTimeNs(long sizeBytes) {    	
     	double airTime = (sizeBytes/(double) BYTES_PER_KILOBIT) / getBandwidth();
     	return (long) (airTime * TimeUnit.SECONDS.toNanos(1));
     }

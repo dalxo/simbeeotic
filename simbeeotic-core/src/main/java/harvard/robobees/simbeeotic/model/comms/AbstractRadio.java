@@ -158,6 +158,12 @@ public abstract class AbstractRadio extends AbstractModel implements Radio {
     public void finish() {
     }
 
+    /**
+     * Calculates air time for transmission of given number of bytes in nanoseconds
+     * @param sizeBytes
+     * @return Ait time in nanoseconds
+     */
+    public abstract long calculateAirTimeNs(long sizeBytes);
 
     /**
      * Handles the reception of an RF transmission. 

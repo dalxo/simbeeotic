@@ -8,5 +8,5 @@ package harvard.robobees.simbeeotic.model.comms;
  */
 public class Radio802_11bg extends HalfDuplexDefaultRadio {
 
-	double bandwidth = 54000000;       // Bps
+	public static double bandwidth = 54000000;       // Bps
 }

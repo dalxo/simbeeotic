@@ -220,5 +220,11 @@ public class CC2420 extends ZigbeeRadio {
                 logger.warn("Unrecognized TX power level, using default level.");
         }
     }
+
+
+	@Override
+	public long calculateAirTimeNs(long sizeBytes) {
+		return 0;
+	}
     
 }
