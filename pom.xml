@@ -228,7 +228,7 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <url>file://C:/Work/_Git/simbeeotic/repo</url>
+            <url>file://C:/Work/git/simbeeotic/repo</url>
         </repository>
     </repositories>
 
