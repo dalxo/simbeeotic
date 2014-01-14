@@ -5,9 +5,6 @@ import harvard.robobees.simbeeotic.SimEngine;
 import harvard.robobees.simbeeotic.SimTime;
 import harvard.robobees.simbeeotic.model.AbstractModel;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Abstract model of a communication protocol. Protocol has one Service Access Point (SAP)
  * for lower protocol and can send data to several upper protocols via their lower SAP.
@@ -24,7 +21,7 @@ public abstract class AbstractProtocol {
 	/**
 	 * Upper protocol listeners
 	 */
-	private Set<AbstractProtocol> upperProtocols = new HashSet<AbstractProtocol>();
+	private AbstractProtocol upperProtocol;
 
 	private AbstractProtocol lowerProtocol;
 
@@ -39,48 +36,44 @@ public abstract class AbstractProtocol {
 	
 	abstract public void handleEvent(SimTime simTime, ProtocolEvent pe);
 	
-	/**
-	 * Add upper protocol (message) listener
-	 * @param protocol
-	 */
-	public final void addUpperProtocol(AbstractProtocol protocol) {
-		upperProtocols.add(protocol);
-	}
 	
-	/**
-	 * Remove upper protocol listener for messages from this protocol
-	 * @param protocol
-	 */
-	public final void removeUpperProtocols(AbstractProtocol protocol) {
-		upperProtocols.remove(protocol);
+	protected final void indicateData(AbstractPduWrap pdu) {
+		this.upperProtocol.sapIndication(this, SapType.DATA, pdu);
 	}
+		
 	
-	/**
-	 * Send message to upper protocols
-	 * @param data
-	 */
-	protected final void notifyUpper(byte[] data, AbstractPduWrap pdu) {
-		for(AbstractProtocol protocol : upperProtocols)
-			protocol.lowerSAP(this, pdu);
+	protected final void requestData(AbstractPduWrap pdu) {
+		this.lowerProtocol.sapRequest(this, SapType.DATA, pdu);
 	}
 
 	/**
-	 * Send message to lower protocol
-	 * @param data
+	 * Service Access Point (SAP) primitive: request. The request primitive is 
+	 * passed from the N-user to the N-layer (or sublayer) to request that a service be initiated.
 	 */
-	protected final void notifyLower(byte[] data, AbstractPduWrap pdu) {
-		lowerProtocol.upperSAP(this, pdu);
-	}
-	
-	/**
-	 * Receives messages from lower protocols 
-	 */
-	abstract public void lowerSAP(AbstractProtocol sender, AbstractPduWrap pdu);
+	abstract public void sapRequest(AbstractProtocol origin, SapType type, Object ... params);
 
 	/**
-	 * Receives messages from the upper protocols
+	 * Service Access Point (SAP) primitive: response. The response primitive is passed from the
+	 * N-user to the N-layer (or sublayer) to complete a procedure previously invoked by an 
+	 * indication primitive.
 	 */
-	abstract public void upperSAP(AbstractProtocol sender, AbstractPduWrap pdu);
+	abstract public void sapResponse(AbstractProtocol origin, SapType type, Object ... params);
+
+	/**
+	 * Service Access Point (SAP) primitive: indication. The indication primitive is passed from the 
+	 * N-layer (or sublayer) to the N-user to indicate an internal N-layer (or sublayer) event that 
+	 * is significant to the N-user. This event may be logically related to a remote service request,
+	 * or may be caused by an event internal to the N-layer (or sublayer).
+	 */
+	abstract public void sapIndication(AbstractProtocol origin, SapType type, Object ... params);
+
+	/**
+	 * Service Access Point (SAP) primitive: confirm. The confirm primitive is passed from the 
+	 * N-layer (or sublayer) to the N-user to convey the results of one or more associated previous
+	 * service request(s). 
+	 */
+	abstract public void sapConfirm(AbstractProtocol origin, SapType type, Object ... params);
+	
 	
 	abstract public int getMaxDataPayload();
 	
@@ -132,6 +125,14 @@ public abstract class AbstractProtocol {
 
 	public void setClockControl(ClockControl clockControl) {
 		this.clockControl = clockControl;
+	}
+
+	public AbstractProtocol getUpperProtocol() {
+		return upperProtocol;
+	}
+
+	public void setUpperProtocol(AbstractProtocol upperProtocol) {
+		this.upperProtocol = upperProtocol;
 	}
 
 }

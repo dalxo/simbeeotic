@@ -23,11 +23,6 @@ public class DllSimple extends AbstractProtocol {
 
 	}
 
-	@Override
-	public void lowerSAP(AbstractProtocol sender, AbstractPduWrap pdu) {
-		// Ignore, we do not have lowerSAP, just radio
-	}
-
 	public AbstractRadio getRadio() {
 		return radio;
 	}
@@ -40,19 +35,52 @@ public class DllSimple extends AbstractProtocol {
      * {@inheritDoc}
      */
 	@Override
-	public void upperSAP(AbstractProtocol sender, AbstractPduWrap pdu) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public int getMaxDataPayload() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	 /**
+     * {@inheritDoc}
+     */
 	@Override
 	public void handleEvent(SimTime simTime, ProtocolEvent pe) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	 /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void sapRequest(AbstractProtocol origin, SapType type, Object... params) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	 /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void sapResponse(AbstractProtocol origin, SapType type, Object... params) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	 /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void sapIndication(AbstractProtocol origin, SapType type, Object... params) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	 /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void sapConfirm(AbstractProtocol origin, SapType type, Object... params) {
 		// TODO Auto-generated method stub
 		
 	}

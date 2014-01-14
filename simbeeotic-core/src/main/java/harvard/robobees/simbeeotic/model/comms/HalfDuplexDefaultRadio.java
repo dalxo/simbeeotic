@@ -68,7 +68,7 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
 	
     Band band = new Band(2442.5, 85);
     double snrMargin = 7;           // dBm
-    double bandwidth = 31250;       // Bps
+    protected double bandwidth = 31250;       // Bps
     double txEnergy = 12;           // mA
     double rxEnergy = 15;           // mA
     double idleEnergy = 0.5;        // mA
@@ -242,7 +242,8 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
      */
     @Override
     public long calculateAirTimeNs(long sizeBytes) {    	
-    	double airTime = (sizeBytes/(double) BYTES_PER_KILOBIT) / getBandwidth();
+    	//double airTime = (sizeBytes/(double) BYTES_PER_KILOBIT) / getBandwidth();
+    	double airTime = sizeBytes/getBandwidth();
     	return (long) (airTime * TimeUnit.SECONDS.toNanos(1));
     }
     
@@ -343,7 +344,7 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
 
     @Inject(optional = true)
     public final void setBandwidth(@Named("bandwidth") final double bandwidth) {
-        this.bandwidth = bandwidth * 125;  // convert kbps to Bps
+        this.bandwidth = bandwidth * BYTES_PER_KILOBIT;  // convert kbps to Bps
     }
 
 
