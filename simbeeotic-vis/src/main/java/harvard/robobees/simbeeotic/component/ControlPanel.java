@@ -68,10 +68,10 @@ public class ControlPanel extends JPanel {
     private SimEngine simEngine;
     private ViewPanel view3D;
 
-    private static final Point3d DEFAULT_VIEW = new Point3d(-20, 12, 20);
-    private static final Point3d UPPER_LEFT_VIEW = new Point3d(-20, 8, -20);
-    private static final Point3d UPPER_RIGHT_VIEW = new Point3d(20, 12, -20);
-    private static final Point3d TOP_VIEW = new Point3d(0, 50, 0.01);
+    private static final Point3d DEFAULT_VIEW = new Point3d(-20, 12, 200);
+    private static final Point3d UPPER_LEFT_VIEW = new Point3d(-20, 8, 200);
+    private static final Point3d UPPER_RIGHT_VIEW = new Point3d(20, 12, 200);
+    private static final Point3d TOP_VIEW = new Point3d(0, 0, 1200);
     private static final Point3d LOOK_AT = new Point3d(0, 0, 0);
     private static final Vector3d UP = new Vector3d(0, 1, 0);
 
@@ -116,6 +116,8 @@ public class ControlPanel extends JPanel {
                 return id + " (" + type + ")";
             }
         }
+        
+        clock.pause();
 
         clock.addListener(new ClockListener() {
 

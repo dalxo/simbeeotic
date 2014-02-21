@@ -33,7 +33,6 @@ package harvard.robobees.simbeeotic.model.comms;
 
 
 import static harvard.robobees.simbeeotic.environment.PhysicalConstants.SPEED_OF_LIGHT;
-import harvard.robobees.simbeeotic.model.protocol.AbstractPduWrap;
 
 
 /**

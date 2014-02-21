@@ -32,14 +32,14 @@
 package harvard.robobees.simbeeotic.model.sensor;
 
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import harvard.robobees.simbeeotic.model.PhysicalEntity;
 import harvard.robobees.simbeeotic.model.AbstractModel;
 import harvard.robobees.simbeeotic.model.Model;
+import harvard.robobees.simbeeotic.model.PhysicalEntity;
 
 import javax.vecmath.Vector3f;
-import java.util.Random;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 
 /**
