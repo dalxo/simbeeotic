@@ -48,9 +48,12 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+
 import harvard.robobees.simbeeotic.SimEngine;
 import harvard.robobees.simbeeotic.SimTime;
 import harvard.robobees.simbeeotic.configuration.ConfigurationAnnotations.GlobalScope;
+import harvard.robobees.simbeeotic.util.RandomWELL512;
+
 import org.w3c.dom.Document;
 
 
@@ -447,7 +450,7 @@ public abstract class AbstractModel implements Model, TimerFactory {
     public final void setRandomSeed(@Named("random-seed") final long seed) {
 
         if (!initialized) {
-            this.rand = new Random(seed);
+            this.rand = new RandomWELL512(seed);
         }
     }
 

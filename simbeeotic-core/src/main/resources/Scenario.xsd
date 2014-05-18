@@ -79,6 +79,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:attribute name="value" type="xs:int" use="required"/>
+        <xs:attribute name="noseed" type="xs:boolean" use="optional" default="false"/>
     </xs:complexType>
 
     <xs:complexType name="VariableMasterSeed">

@@ -51,11 +51,14 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+
 import harvard.robobees.simbeeotic.configuration.ConfigurationAnnotations.GlobalScope;
 import harvard.robobees.simbeeotic.configuration.Variation;
 import harvard.robobees.simbeeotic.configuration.VariationIterator;
 import harvard.robobees.simbeeotic.configuration.InvalidScenarioException;
 import harvard.robobees.simbeeotic.configuration.scenario.ConfigProps;
+import harvard.robobees.simbeeotic.configuration.scenario.ConstantMasterSeed;
+import harvard.robobees.simbeeotic.configuration.scenario.MasterSeed;
 import harvard.robobees.simbeeotic.configuration.scenario.Scenario;
 import harvard.robobees.simbeeotic.configuration.scenario.ModelConfig;
 import harvard.robobees.simbeeotic.configuration.scenario.SensorConfig;
@@ -76,14 +79,17 @@ import harvard.robobees.simbeeotic.model.CollisionEvent;
 import harvard.robobees.simbeeotic.model.MotionRecorder;
 import harvard.robobees.simbeeotic.model.sensor.AbstractSensor;
 import harvard.robobees.simbeeotic.util.DocUtil;
+import harvard.robobees.simbeeotic.util.RandomWELL512;
 import harvard.robobees.simbeeotic.model.comms.AntennaPattern;
 import harvard.robobees.simbeeotic.model.comms.IsotropicAntenna;
 import harvard.robobees.simbeeotic.model.comms.AbstractRadio;
 import harvard.robobees.simbeeotic.component.VariationComponent;
+
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
 import javax.vecmath.Vector3f;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashSet;
@@ -170,7 +176,14 @@ public class SimController {
 
             final AtomicInteger nextModelId = new AtomicInteger(0);
             final AtomicInteger nextMotionId = new AtomicInteger(0);
-            final Random variationSeedGenerator = new Random(variation.getSeed());
+            
+            //final Random variationSeedGenerator = new Random(variation.getSeed());
+            final Random variationSeedGenerator; 
+            ConstantMasterSeed cms = scenario.getMasterSeed().getConstant(); 
+            if(cms != null && cms.isNoseed())
+            	variationSeedGenerator = new RandomWELL512();
+            else
+            	variationSeedGenerator = new RandomWELL512(variation.getSeed());
 
             // sim engine setup
             final SimEngineImpl simEngine = new SimEngineImpl(realTimeScale);
