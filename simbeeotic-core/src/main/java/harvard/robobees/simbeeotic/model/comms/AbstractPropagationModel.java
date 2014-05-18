@@ -312,4 +312,14 @@ public abstract class AbstractPropagationModel extends AbstractModel implements 
     public final void setReceiveRadiusThreshold(@Named("range-thresh") final double thresh) {
         this.rangeThresh = thresh;
     }
+
+
+	public float getNoiseFloorMean() {
+		return noiseFloorMean;
+	}
+
+
+	public float getNoiseFloorSigma() {
+		return noiseFloorSigma;
+	}
 }

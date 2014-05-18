@@ -69,8 +69,8 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
     Band band = new Band(2442.5, 85);
     double snrMargin = 7;           // dBm
     protected double bandwidth = 31250;       // Bps
-    double txEnergy = 12;           // mA
-    double rxEnergy = 15;           // mA
+    double txEnergy = 12;           // dBm
+    double rxEnergy = 15;           // dBm
     double idleEnergy = 0.5;        // mA
     double maxPower = 0;            // dBm
     // You don't snuggle with Max Power, you strap yourself in and feel the G's!
@@ -277,28 +277,28 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
 
     /** {@inheritDoc} */
     @Override
-    protected double getIdleEnergy() {
+    public double getIdleEnergy() {
         return idleEnergy;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    protected double getRxEnergy() {
+    public double getRxEnergy() {
         return rxEnergy;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    protected double getTxEnergy() {
+    public double getTxEnergy() {
         return txEnergy;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    protected double getBandwidth() {
+    public double getBandwidth() {
         return bandwidth;
     }
 
@@ -364,4 +364,8 @@ public class HalfDuplexDefaultRadio extends AbstractRadio {
     public final void setIdleEnergy(@Named("idle-energy") final double energy) {
         this.idleEnergy = energy;
     }
+
+	public double getSnrMargin() {
+		return snrMargin;
+	}
 }
