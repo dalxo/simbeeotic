@@ -35,6 +35,27 @@
             <groupId>jfree</groupId>
             <artifactId>jfreechart</artifactId>
         </dependency>
+        
+<!--         
+		<dependency>
+  			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.2.11</version>
+		</dependency>
+ -->		
+ 
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-xjc</artifactId>
+			<version>2.2.11</version>
+		</dependency> 
+
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.2.11</version>
+		</dependency>
+
     </dependencies>
 
     <build>
@@ -46,10 +67,30 @@
                 	<debuglevel>lines,vars,source</debuglevel>
                 </configuration>
             </plugin>
+            
             <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
+               <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.13.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>            
             </plugin>
+<!--             
+            <plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.13.1</version>
+				<configuration>
+					<strict>false</strict>
+					<specVersion>22</specVersion>
+				</configuration>
+			</plugin>            
+ -->            
         </plugins>
     </build>
 
